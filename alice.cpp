@@ -164,13 +164,15 @@ const Message *recv()
 
 int main()
 {
+    union semun setval;
+    setval.val = 1;
     shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
     addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
     sem_id = semget(0, 1, IPC_CREAT);
     assert(sem_id != -1);
-    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
+    assert(semctl(sem_id, 0, SETVAL, setval)!=-1);
     while (true)
     {
         freopen("/home/test3/mytest/log.txt","w",stdout);
