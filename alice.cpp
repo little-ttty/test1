@@ -161,6 +161,8 @@ const Message *recv()
 
 int main()
 {
+    int shm_id,sem_id;
+    void* addr;
     while (true)
     {
         freopen("/home/test3/mytest/log.txt","w",stdout);
