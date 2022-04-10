@@ -123,4 +123,4 @@ long crc32(const Message *message)
 
 /* --------------------------------------不得修改两条分割线之间的内容-------------------------------------- */
 int shm_id,sem_id;
-char* addr;
+void* addr;
