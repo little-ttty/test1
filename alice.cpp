@@ -140,7 +140,7 @@ void send(const Message *message)
     
     shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
     sem_id = semget(0, 1, IPC_CREAT);
-    
+
     assert(shm_id != -1);
     addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
@@ -155,7 +155,7 @@ const Message *recv()
     addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
-    assert(memcpy(m,addr, sizeof(message)) == addr);
+    assert(memcpy(m,addr, sizeof(Message)) == addr);
     return m;
 }
 
