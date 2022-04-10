@@ -12,13 +12,6 @@ void v_handle(int shm_id_)
 
 void send(const Message *message)
 {
-    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
-    assert(shm_id != -1);
-    void* addr = shmat(shm_id,NULL,0);
-    assert(addr != NULL);
-    static int sem_id = semget(0, 1, IPC_CREAT);
-    assert(sem_id != -1);
-    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
     p_handle(sem_id);
     assert(memcpy(addr,message, message->size) == addr);
     assert(shmdt(addr) == -1);
@@ -27,13 +20,6 @@ void send(const Message *message)
 
 const Message *recv()
 {
-    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
-    assert(shm_id != -1);
-    void* addr = shmat(shm_id,NULL,0);
-    assert(addr != NULL);
-    static int sem_id = semget(0, 1, IPC_CREAT);
-    assert(sem_id != -1);
-    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
     p_handle(sem_id);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(Message)) == addr);
@@ -45,6 +31,13 @@ const Message *recv()
 int main()
 {
     Message *m2 = (Message *)malloc(MESSAGE_SIZES[4]);
+    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
+    assert(shm_id != -1);
+    void* addr = shmat(shm_id,NULL,0);
+    assert(addr != NULL);
+    static int sem_id = semget(0, 1, IPC_CREAT);
+    assert(sem_id != -1);
+    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
     while (true)
     {
         const Message *m1 = recv();
