@@ -163,8 +163,6 @@ int main()
 {
     while (true)
     {
-        int shm_id,sem_id;
-        char* addr;
         freopen("/home/test3/mytest/log.txt","w",stdout);
         const Message *m1 = next_message();
         if (m1)
