@@ -1,5 +1,8 @@
 #include "common.h"
 
+static int shm_id , sem_id;
+void* addr;
+
 void p_handle(int shm_id_)
 {
     assert((semop(shm_id_,&p,1))!=-1);
@@ -147,29 +150,25 @@ void record(const Message *m)
 
 void send(const Message *message)
 {
-    p_handle(sem_id);
     assert(memcpy(addr,message, message->size) == addr);
     assert(shmdt(addr) == -1);
-    v_handle(sem_id);
 }
 
 const Message *recv()
 {
-    p_handle(sem_id);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(Message)) == addr);
     assert(shmdt(addr) == -1);
-    v_handle(sem_id);
     return m;
 }
 
 int main()
 {
-    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
+    shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
-    void* addr = shmat(shm_id,NULL,0);
+    addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
-    static int sem_id = semget(0, 1, IPC_CREAT);
+    sem_id = semget(0, 1, IPC_CREAT);
     assert(sem_id != -1);
     assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
     while (true)
@@ -178,8 +177,12 @@ int main()
         const Message *m1 = next_message();
         if (m1)
         {
+            p_handle(sem_id);
             send(m1);
+            v_handle(sem_id);
+            p_handle(sem_id);
             const Message *m2 = recv();
+            v_handle(sem_id);
             record(m2);
         }
         else
