@@ -40,7 +40,7 @@ int main()
     assert(addr != NULL);
     sem_id = semget(0, 1, IPC_CREAT);
     assert(sem_id != -1);
-    assert(semctl(sem_id, 0, SETVAL, &setval.array)!=-1);
+    assert(semctl(sem_id, 0, SETVAL, setval.array)!=-1);
     while (true)
     {
         p_handle(sem_id);
