@@ -1,5 +1,15 @@
 #include "common.h"
 
+void p_handle(int shm_id_)
+{
+    assert((semop(shm_id_,&p,1))!=-1);
+}
+
+void p_handle(int shm_id_)
+{
+    assert((semop(shm_id_,&v,1))!=-1);
+}
+
 /* --------------------------------------不得修改两条分割线之间的内容-------------------------------------- */
 
 /*
@@ -137,27 +147,35 @@ void record(const Message *m)
 
 void send(const Message *message)
 {
-    
-    shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
-    sem_id = semget(0, 1, IPC_CREAT);
-
+    static shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
-    addr = shmat(shm_id,NULL,0);
+    void* addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
+    static sem_id = semget(0, 1, IPC_CREAT);
+    assert(sem_id != -1);
+    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
+    p_handle(sem_id);
     assert(memcpy(addr,message, message->size) == addr);
+    v_handle(sem_id);
 }
 
 const Message *recv()
 {
-    
-    shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
+    static shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
-    addr = shmat(shm_id,NULL,0);
+    void* addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
+    static sem_id = semget(0, 1, IPC_CREAT);
+    assert(sem_id != -1);
+    assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
+    p_handle(sem_id);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(Message)) == addr);
+    v_handle(sem_id);
     return m;
 }
+
+
 
 int main()
 {
