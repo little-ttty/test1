@@ -138,9 +138,11 @@ void record(const Message *m)
 void send(const Message *message)
 {
     
-    id = shmget(1111, MESSAGE_SIZES[4], 0666);
-    assert(id != -1);
-    addr = shmat(id,NULL,0);
+    shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
+    sem_id = semget(0, 1, IPC_CREAT);
+    
+    assert(shm_id != -1);
+    addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
     assert(memcpy(addr,message, message->size) == addr);
 }
@@ -148,9 +150,9 @@ void send(const Message *message)
 const Message *recv()
 {
     
-    id = shmget(1111, MESSAGE_SIZES[4], 0666);
-    assert(id != -1);
-    addr = shmat(id,NULL,0);
+    shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
+    assert(shm_id != -1);
+    addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(message)) == addr);
@@ -161,7 +163,7 @@ int main()
 {
     while (true)
     {
-        int id;
+        int shm_id,sem_id;
         char* addr;
         freopen("/home/test3/mytest/log.txt","w",stdout);
         const Message *m1 = next_message();
