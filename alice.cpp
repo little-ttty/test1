@@ -156,6 +156,7 @@ void send(const Message *message)
     assert(semctl(sem_id, 0, SETVAL, 1)!=-1);
     p_handle(sem_id);
     assert(memcpy(addr,message, message->size) == addr);
+    assert(shmdt(addr) == -1);
     v_handle(sem_id);
 }
 
@@ -171,6 +172,7 @@ const Message *recv()
     p_handle(sem_id);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(Message)) == addr);
+    assert(shmdt(addr) == -1);
     v_handle(sem_id);
     return m;
 }
