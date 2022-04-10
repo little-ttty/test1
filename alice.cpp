@@ -147,7 +147,7 @@ void record(const Message *m)
 
 void send(const Message *message)
 {
-    static int shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
+    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
     void* addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
@@ -161,7 +161,7 @@ void send(const Message *message)
 
 const Message *recv()
 {
-    static int shm_id = shmget(1111, MESSAGE_SIZES[4], 0666);
+    static int shm_id = shmget(0, MESSAGE_SIZES[4], 0666);
     assert(shm_id != -1);
     void* addr = shmat(shm_id,NULL,0);
     assert(addr != NULL);
