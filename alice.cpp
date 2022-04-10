@@ -5,7 +5,7 @@ void p_handle(int shm_id_)
     assert((semop(shm_id_,&p,1))!=-1);
 }
 
-void p_handle(int shm_id_)
+void v_handle(int shm_id_)
 {
     assert((semop(shm_id_,&v,1))!=-1);
 }
