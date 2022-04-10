@@ -124,3 +124,9 @@ long crc32(const Message *message)
 /* --------------------------------------不得修改两条分割线之间的内容-------------------------------------- */
 struct sembuf p = {0, -1, SEM_UNDO};
 struct sembuf v = {0, 1, SEM_UNDO};
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+    struct seminfo *buff;
+};

@@ -23,10 +23,8 @@ void send(const Message *message)
 
 const Message *recv()
 {
-    p_handle(sem_id);
     static Message *m = (Message *)malloc(MESSAGE_SIZES[4]);
     assert(memcpy(m,addr, sizeof(Message)) == addr);
-    v_handle(sem_id);
     assert(shmdt(addr) == -1);
     return m;
 }
@@ -45,7 +43,9 @@ int main()
     assert(semctl(sem_id, 0, SETVAL, setval)!=-1);
     while (true)
     {
+        p_handle(sem_id);
         const Message *m1 = recv();
+        v_handle(sem_id);
         assert(m1->checksum == crc32(m1));
         memcpy(m2, m1, m1->size); // 拷贝m1至m2
         m2->payload[0]++;         // 第一个字符加一

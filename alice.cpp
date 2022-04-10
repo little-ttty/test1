@@ -150,8 +150,10 @@ void record(const Message *m)
 
 void send(const Message *message)
 {
+    p_handle(sem_id);
     assert(memcpy(addr,message, message->size) == addr);
     assert(shmdt(addr) == -1);
+    v_handle(sem_id);
 }
 
 const Message *recv()
@@ -178,10 +180,8 @@ int main()
         freopen("/home/test3/mytest/log.txt","w",stdout);
         const Message *m1 = next_message();
         if (m1)
-        {
-            p_handle(sem_id);
+        {  
             send(m1);
-            v_handle(sem_id);
             p_handle(sem_id);
             const Message *m2 = recv();
             v_handle(sem_id);
